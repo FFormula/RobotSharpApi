@@ -1,12 +1,12 @@
 <?php
 
-namespace FFormula\RobotSharp\API;
+namespace FFormula\RobotSharp\ApiSystem;
 
 use FFormula\RobotSharp\Model\Login;
 use FFormula\RobotSharp\Model\Partner;
 use FFormula\RobotSharp\Model\User;
 
-class Auth extends Api
+class Client extends Base
 {
     /**
      * @param $get array - user login info:

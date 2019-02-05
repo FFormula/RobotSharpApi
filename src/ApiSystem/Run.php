@@ -6,12 +6,12 @@
  * Time: 8:54 AM
  */
 
-namespace FFormula\RobotSharp\API;
+namespace FFormula\RobotSharp\ApiSystem;
 
 use FFormula\RobotSharp\Model\Login;
 use FFormula\RobotSharp\Model\User;
 
-class Run extends Api
+class Run extends Base
 {
     /**
      * @param $get array - All need params
@@ -35,7 +35,7 @@ class Run extends Api
             if (!$get['method'])
                 return $this->error('method not specified');
 
-            $class = '\\FFormula\\RobotSharp\\API\\' . $this->az($_GET['class']);
+            $class = '\\FFormula\\RobotSharp\\ApiClient\\' . $this->az($_GET['class']);
             if (!class_exists($class))
                 return $this->error('class not exists');
 

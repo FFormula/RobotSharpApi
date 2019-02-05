@@ -1,10 +1,10 @@
 <?php
 
-namespace FFormula\RobotSharp\API;
+namespace FFormula\RobotSharp\ApiSystem;
 
 use FFormula\RobotSharp\Model\User;
 
-class Api
+class Base
 {
     /** @var string */
     var $answer;
