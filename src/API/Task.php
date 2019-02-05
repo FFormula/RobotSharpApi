@@ -4,7 +4,7 @@ namespace FFormula\RobotSharp\API;
 
 class Task extends Api
 {
-    public function getTask($get)
+    public function getTask(array $get) : string
     {
         if (!$get['taskId'])
             return $this->error('taskId not specified');
