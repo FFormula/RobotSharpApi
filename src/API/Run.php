@@ -54,7 +54,8 @@ class Run extends Api
             if (!$api->user->row['id'])
                 return $this->error('User not found');
 
-            $api->post = $post; // if any required
+            if (count($post) > 0)
+                $api->post = $post; // if any required
 
             return $api->$method($get);
 

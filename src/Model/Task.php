@@ -19,4 +19,16 @@ class Task extends Record
              WHERE id = ?', [$taskId]);
         return $this;
     }
+
+    public function getList($dictId) : array
+    {
+        return $this->db->selectRows('
+            SELECT task.id taskId, authorId, caption, sector
+              FROM task
+              JOIN taskDict 
+                ON task.id = taskDict.taskId
+               AND dictId = ?
+          ORDER BY task.step', [ $dictId ]);
+    }
+
 }

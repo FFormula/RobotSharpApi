@@ -16,4 +16,12 @@ class Task extends Api
 
         return $this->answer($task->row);
     }
+
+    public function getTaskList(array $get) : string
+    {
+        $task = new \FFormula\RobotSharp\Model\Task();
+        $list = $task->getList('ru');
+        return $this->answer($list);
+    }
+
 }
