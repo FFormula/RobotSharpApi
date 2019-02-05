@@ -23,7 +23,7 @@ class Task extends Record
     public function getList($dictId) : array
     {
         return $this->db->selectRows('
-            SELECT task.id taskId, authorId, caption, sector
+            SELECT task.id, authorId, caption, sector
               FROM task
               JOIN taskDict 
                 ON task.id = taskDict.taskId

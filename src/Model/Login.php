@@ -9,7 +9,7 @@ class Login extends Record
         $this->row = $this->db->select1Row('
             SELECT token, partnerId, userId, expired
               FROM login
-             WHERE token = ?', [$token]);
+             WHERE token = ?', [ $token ]);
         return $this;
     }
 

@@ -30,8 +30,7 @@ class Api
     protected function exception(\Exception $ex): string
     {
         $this->error = 'Exception: ' . $ex->getMessage() .
-                       ' in ' . $ex->getFile() .
-                       ' at ' . $ex->getLine() ;
+                       ' in ' . $ex->getTraceAsString();
         $this->answer = null;
         return $this->getResponse();
     }

@@ -4,15 +4,17 @@ namespace FFormula\RobotSharp\Service;
 
 class PdoDB implements DB
 {
-    /** @var PDO */
+    /** @var \PDO */
     var $pdo;
 
-    /** @var PDOStatement */
+    /** @var \PDOStatement */
     var $sth;
 
     function __construct($pdo)
     {
         $this->pdo = $pdo;
+        $this->pdo->setAttribute(
+            \PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
     }
 
     public function execute(string $query, array $param = []): bool
@@ -32,13 +34,14 @@ class PdoDB implements DB
     {
         $rows = $this->selectRows($query, $param);
         if (count($rows) == 0) return [];
+        if (!is_array($rows[0])) return [];
         return $rows[0];
     }
 
     public function selectRows(string $query, array $param = []): array
     {
         $this->execute($query, $param);
-        $arr = $this->sth->fetchAll();
+        $arr = $this->sth->fetchAll(\PDO::FETCH_ASSOC);
         if ($arr == null) return [];
         return $arr;
     }
