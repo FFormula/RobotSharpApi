@@ -4,6 +4,15 @@ namespace FFormula\RobotSharp\Model;
 
 class User extends Record
 {
+    public function selectById($userId) : User
+    {
+        $this->row = $this->db->select1Row('
+            SELECT id, partnerId, name, email, status
+              FROM user
+             WHERE id = ?', [$userId]);
+        return $this;
+    }
+
     public function selectByEmail($email) : User
     {
         $this->row = $this->db->select1Row('

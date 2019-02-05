@@ -3,6 +3,15 @@ namespace FFormula\RobotSharp\Model;
 
 class Login extends Record
 {
+    public function selectByToken($token) : Login
+    {
+        $this->deleteExpired();
+        $this->row = $this->db->select1Row('
+            SELECT token, partnerId, userId, expired
+              FROM login
+             WHERE token = ?', [$token]);
+        return $this;
+    }
 
     public function isTimeExpired($timeUser) : bool
     {
@@ -29,6 +38,13 @@ class Login extends Record
                    partnerId = :partnerId,
                    userId = :userId,
                    expired = :expired', $this->row);
+    }
+
+    public function deleteExpired()
+    {
+        $this->db->execute('
+            DELETE FROM login 
+             WHERE expired < ?', [time()]);
     }
 
     public function deleteByUserId(string $userId) : bool

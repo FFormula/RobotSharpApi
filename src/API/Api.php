@@ -2,10 +2,23 @@
 
 namespace FFormula\RobotSharp\API;
 
+use FFormula\RobotSharp\Model\User;
+
 class Api
 {
+    /** @var string */
     var $answer;
+    /** @var array */
     var $error;
+    /** @var User */
+    var $user;
+
+    protected function answer(array $answer): string
+    {
+        $this->error = 'ok';
+        $this->answer = $answer;
+        return $this->getResponse();
+    }
 
     protected function error(string $error): string
     {
@@ -14,10 +27,12 @@ class Api
         return $this->getResponse();
     }
 
-    protected function answer(array $answer): string
+    protected function exception(\Exception $ex): string
     {
-        $this->error = 'ok';
-        $this->answer = $answer;
+        $this->error = 'Exception: ' . $ex->getMessage() .
+                       ' in ' . $ex->getFile() .
+                       ' at ' . $ex->getLine() ;
+        $this->answer = null;
         return $this->getResponse();
     }
 

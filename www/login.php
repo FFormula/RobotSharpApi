@@ -1,5 +1,8 @@
 <?php
 
+if (!file_exists('config.php'))
+    die('Copy www/config.default.php to www/config.php and configure it');
+
 include 'config.php';
 include '../vendor/autoload.php';
 
