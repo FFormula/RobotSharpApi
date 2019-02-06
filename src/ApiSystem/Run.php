@@ -26,9 +26,6 @@ class Run extends Base
     {
         try
         {
-            if (!$get['token'])
-                return $this->error('Token not specified');
-
             if (!$get['class'])
                 return $this->error('class not specified');
 
@@ -45,17 +42,24 @@ class Run extends Base
             if (!method_exists($class, $method))
                 return $this->error('method not exists');
 
-            $login = (new Login())->selectByToken($get['token']);
-            if (!$login->row['userId'])
-                return $this->error('Token not found or expired');
-
-            $api->user = (new User())->selectById($login->row['userId']);
-
-            if (!$api->user->row['id'])
-                return $this->error('User not found');
-
             if (count($post) > 0)
                 $api->post = $post; // if any required
+
+            if (!($get['class'] == 'Session' &&
+                  $get['method'] == 'login'))
+            {
+                if (!$get['token'])
+                    return $this->error('Token not specified');
+
+                $login = (new Login())->selectByToken($get['token']);
+                if (!$login->row['userId'])
+                    return $this->error('Token not found or expired');
+
+                $api->user = (new User())->selectById($login->row['userId']);
+
+                if (!$api->user->row['id'])
+                    return $this->error('User not found');
+            }
 
             return $api->$method($get);
 

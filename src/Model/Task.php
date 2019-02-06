@@ -14,7 +14,7 @@ class Task extends Record
     public function selectById($taskId) : Task
     {
         $this->row = $this->db->select1Row('
-            SELECT id, authorId, task, sectorId, sector, step
+            SELECT id, authorId, name, sectorId, sector, step
               FROM task
              WHERE id = ?', [$taskId]);
         return $this;
