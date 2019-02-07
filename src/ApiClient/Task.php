@@ -1,8 +1,8 @@
 <?php
 
-namespace FFormula\RobotSharp\ApiClient;
+namespace FFormula\RobotSharpApi\ApiClient;
 
-use FFormula\RobotSharp\ApiSystem\Base;
+use FFormula\RobotSharpApi\ApiSystem\Base;
 
 class Task extends Base
 {
@@ -11,7 +11,7 @@ class Task extends Base
         if (!$get['taskId'])
             return $this->error('taskId not specified');
 
-        $task = (new \FFormula\RobotSharp\Model\Task())->selectById($get['taskId']);
+        $task = (new \FFormula\RobotSharpApi\Model\Task())->selectById($get['taskId']);
 
         if (!$task->row['id'])
             return $this->error('task not found');
@@ -21,7 +21,7 @@ class Task extends Base
 
     public function getTaskList(array $get) : string
     {
-        $task = new \FFormula\RobotSharp\Model\Task();
+        $task = new \FFormula\RobotSharpApi\Model\Task();
         $list = $task->getList('ru');
         return $this->answer($list);
     }

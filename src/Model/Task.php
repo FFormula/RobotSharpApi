@@ -1,13 +1,6 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: 308
- * Date: 2/5/2019
- * Time: 9:46 AM
- */
 
-namespace FFormula\RobotSharp\Model;
-
+namespace FFormula\RobotSharpApi\Model;
 
 class Task extends Record
 {

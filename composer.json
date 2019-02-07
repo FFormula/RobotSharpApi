@@ -11,7 +11,7 @@
     ],
     "autoload": {
         "psr-4": {
-            "FFormula\\RobotSharp\\" : "src/"
+            "FFormula\\RobotSharpApi\\" : "src/"
         }
     },
     "require": {

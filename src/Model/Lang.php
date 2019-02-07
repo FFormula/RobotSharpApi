@@ -6,7 +6,7 @@
  * Time: 8:21 AM
  */
 
-namespace FFormula\RobotSharp\Model;
+namespace FFormula\RobotSharpApi\Model;
 
 class Lang extends Record
 {

@@ -1,6 +1,6 @@
 <?php
 
-namespace FFormula\RobotSharp\ApiClient;
+namespace FFormula\RobotSharpApi\ApiClient;
 
 use FFormula\RobotSharp\ApiSystem\Base;
 use FFormula\RobotSharp\Model\Login;

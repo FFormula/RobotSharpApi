@@ -1,8 +1,8 @@
 <?php
 
-namespace FFormula\RobotSharp\Model;
+namespace FFormula\RobotSharpApi\Model;
 
-use FFormula\RobotSharp\Service\DB;
+use FFormula\RobotSharpApi\Service\DB;
 
 class Record
 {

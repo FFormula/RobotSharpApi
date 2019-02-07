@@ -1,5 +1,5 @@
 <?php
-namespace FFormula\RobotSharp\Model;
+namespace FFormula\RobotSharpApi\Model;
 
 class Login extends Record
 {

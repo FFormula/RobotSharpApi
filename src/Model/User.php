@@ -1,6 +1,6 @@
 <?php
 
-namespace FFormula\RobotSharp\Model;
+namespace FFormula\RobotSharpApi\Model;
 
 class User extends Record
 {

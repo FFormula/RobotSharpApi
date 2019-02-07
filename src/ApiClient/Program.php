@@ -1,8 +1,8 @@
 <?php
 
-namespace FFormula\RobotSharp\ApiClient;
+namespace FFormula\RobotSharpApi\ApiClient;
 
-use FFormula\RobotSharp\ApiSystem\Base;
+use FFormula\RobotSharpApi\ApiSystem\Base;
 
 class Program extends Base
 {
@@ -17,7 +17,7 @@ class Program extends Base
         if (!$this->user->row['id'])
             return $this->error('No user id');
 
-        $program = (new \FFormula\RobotSharp\Model\Program())->selectByKeys(
+        $program = (new \FFormula\RobotSharpApi\Model\Program())->selectByKeys(
             $this->user->row['id'],
             $get['taskId'],
             $get['langId']);

@@ -1,8 +1,8 @@
 <?php
 
-namespace FFormula\RobotSharp\ApiClient;
+namespace FFormula\RobotSharpApi\ApiClient;
 
-use FFormula\RobotSharp\ApiSystem\Base;
+use FFormula\RobotSharpApi\ApiSystem\Base;
 
 class Lang extends Base
 {

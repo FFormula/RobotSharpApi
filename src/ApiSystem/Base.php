@@ -1,8 +1,8 @@
 <?php
 
-namespace FFormula\RobotSharp\ApiSystem;
+namespace FFormula\RobotSharpApi\ApiSystem;
 
-use FFormula\RobotSharp\Model\User;
+use FFormula\RobotSharpApi\Model\User;
 
 class Base
 {
