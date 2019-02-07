@@ -1,8 +1,8 @@
 <?php
 
-namespace FFormula\RobotSharpApi\ApiClient;
+namespace FFormula\RobotSharpApi\Server;
 
-use FFormula\RobotSharpApi\ApiSystem\Base;
+use FFormula\RobotSharpApi\System\Base;
 
 class Task extends Base
 {

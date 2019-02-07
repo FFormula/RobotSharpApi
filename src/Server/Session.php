@@ -1,11 +1,11 @@
 <?php
 
-namespace FFormula\RobotSharpApi\ApiClient;
+namespace FFormula\RobotSharpApi\Server;
 
-use FFormula\RobotSharp\ApiSystem\Base;
-use FFormula\RobotSharp\Model\Login;
-use FFormula\RobotSharp\Model\Partner;
-use FFormula\RobotSharp\Model\User;
+use FFormula\RobotSharpApi\System\Base;
+use FFormula\RobotSharpApi\Model\Login;
+use FFormula\RobotSharpApi\Model\Partner;
+use FFormula\RobotSharpApi\Model\User;
 
 class Session extends Base
 {

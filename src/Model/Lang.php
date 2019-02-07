@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: fform
- * Date: 2/6/2019
- * Time: 8:21 AM
- */
 
 namespace FFormula\RobotSharpApi\Model;
 

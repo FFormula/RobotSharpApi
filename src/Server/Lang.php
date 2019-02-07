@@ -1,14 +1,14 @@
 <?php
 
-namespace FFormula\RobotSharpApi\ApiClient;
+namespace FFormula\RobotSharpApi\Server;
 
-use FFormula\RobotSharpApi\ApiSystem\Base;
+use FFormula\RobotSharpApi\System\Base;
 
 class Lang extends Base
 {
     public function getLangList(array $get) : string
     {
-        $lang = new \FFormula\RobotSharp\Model\Lang();
+        $lang = new \FFormula\RobotSharpApi\Model\Lang();
         $list = $lang->selectAll();
         return $this->answer($list);
     }
