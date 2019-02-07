@@ -10,9 +10,11 @@ class PdoDB implements DB
     /** @var \PDOStatement */
     var $sth;
 
-    function __construct($pdo)
+    function __construct(array $config)
     {
-        $this->pdo = $pdo;
+        $this->pdo = new \PDO($config['dsn'],
+                              $config['user'],
+                              $config['pass']);
         $this->pdo->setAttribute(
             \PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
     }
