@@ -1,10 +1,9 @@
 <?php
-
 namespace FFormula\RobotSharpApi\Model;
 
 use FFormula\RobotSharpApi\System\DB;
 
-class Record
+abstract class Record
 {
     /** @var DB */
     var $db;
