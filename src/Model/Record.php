@@ -2,7 +2,7 @@
 
 namespace FFormula\RobotSharpApi\Model;
 
-use FFormula\RobotSharpApi\Service\DB;
+use FFormula\RobotSharpApi\System\DB;
 
 class Record
 {

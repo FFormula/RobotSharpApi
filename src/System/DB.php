@@ -1,6 +1,6 @@
 <?php
 
-namespace FFormula\RobotSharpApi\Service;
+namespace FFormula\RobotSharpApi\System;
 
 interface DB
 {
