@@ -45,6 +45,7 @@ class Run extends Base
             if (count($post) > 0)
                 $api->post = $post; // if any required
 
+            if (false)
             if (!($get['class'] == 'Session' &&
                   $get['method'] == 'login'))
             {
