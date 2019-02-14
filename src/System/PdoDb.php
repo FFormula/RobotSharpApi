@@ -2,7 +2,7 @@
 
 namespace FFormula\RobotSharpApi\System;
 
-class PdoDB implements DB
+class PdoDb implements DbInterface
 {
     /** @var \PDO */
     var $pdo;

@@ -1,12 +1,20 @@
 <?php
-
 namespace FFormula\RobotSharpApi\System;
 
-interface DB
+class DB
 {
-    function execute(string $query, array $param = []): bool;
-    function getLastInsertId(): string;
-    function selectValue(string $query, array $param = []): string;
-    function select1Row(string $query, array $param = []) : array;
-    function selectRows(string $query, array $param = []) : array;
+    /** @var DbInterface */
+    private static $db = null;
+
+    public static function set(DbInterface $db)
+    {
+        self::$db = $db;
+    }
+
+    public static function get() : DbInterface
+    {
+        if (self::$db == null)
+            die ('Db not set');
+        return self::$db;
+    }
 }
