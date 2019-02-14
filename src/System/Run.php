@@ -32,15 +32,16 @@ class Run extends Base
             if (!$get['method'])
                 return $this->error('method not specified');
 
-            $class = '\\FFormula\\RobotSharpApi\\Server\\' . $this->az($_GET['class']);
+            $className = $this->az($_GET['class']);
+            $class = '\\FFormula\\RobotSharpApi\\Server\\' . $className;
             if (!class_exists($class))
-                return $this->error('class not exists');
+                return $this->error('Api-class ' . $className . ' does not exists');
 
             $api = new $class();
 
             $method = $this->az($get['method']);
             if (!method_exists($class, $method))
-                return $this->error('method not exists');
+                return $this->error('method ' . $className . '->' . $method . ' not exists');
 
             if (count($post) > 0)
                 $api->post = $post; // if any required
