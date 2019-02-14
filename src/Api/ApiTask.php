@@ -1,10 +1,8 @@
 <?php
 
-namespace FFormula\RobotSharpApi\Server;
+namespace FFormula\RobotSharpApi\Api;
 
-use FFormula\RobotSharpApi\System\Base;
-
-class Task extends Base
+class ApiTask extends Base
 {
     public function getTask(array $get) : string
     {

@@ -1,7 +1,7 @@
 -- --------------------------------------------------------
 -- Host:                         127.0.0.1
--- Server version:               5.7.20 - MySQL Community Server (GPL)
--- Server OS:                    Win64
+-- Api version:               5.7.20 - MySQL Community Api (GPL)
+-- Api OS:                    Win64
 -- HeidiSQL Version:             9.5.0.5196
 -- --------------------------------------------------------
 

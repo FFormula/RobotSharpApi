@@ -1,13 +1,12 @@
 <?php
 
-namespace FFormula\RobotSharpApi\Server;
+namespace FFormula\RobotSharpApi\Api;
 
-use FFormula\RobotSharpApi\System\Base;
 use FFormula\RobotSharpApi\Model\Login;
 use FFormula\RobotSharpApi\Model\Partner;
 use FFormula\RobotSharpApi\Model\User;
 
-class Session extends Base
+class ApiSession extends Base
 {
     /**
      * @param $get array - user login info:

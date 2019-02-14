@@ -14,5 +14,5 @@ FFormula\RobotSharpApi\System\DB::set(
         require $path . 'config/pdo.php'));
 
 echo
-    (new FFormula\RobotSharpApi\System\Run())
+    (new FFormula\RobotSharpApi\Api\Run())
         ->start($_GET, $_POST);

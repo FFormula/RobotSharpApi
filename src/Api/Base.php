@@ -1,6 +1,6 @@
 <?php
 
-namespace FFormula\RobotSharpApi\System;
+namespace FFormula\RobotSharpApi\Api;
 
 use FFormula\RobotSharpApi\Model\User;
 
