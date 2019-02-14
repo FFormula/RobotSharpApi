@@ -3,6 +3,7 @@
 namespace FFormula\RobotSharpApi\Api;
 
 use FFormula\RobotSharpApi\Model\User;
+use FFormula\RobotSharpApi\System\Log;
 
 class Base
 {
@@ -41,7 +42,9 @@ class Base
             'error' => $this->error,
             'answer' => $this->answer
         ];
-        return json_encode($response);
+        $json = json_encode($response);
+        Log::get()->info('Response: ' . $json);
+        return $json;
     }
 }
 

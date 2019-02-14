@@ -10,6 +10,7 @@ namespace FFormula\RobotSharpApi\Api;
 
 use FFormula\RobotSharpApi\Model\Login;
 use FFormula\RobotSharpApi\Model\User;
+use FFormula\RobotSharpApi\System\Log;
 
 class Run extends Base
 {
@@ -66,6 +67,8 @@ class Run extends Base
             return $api->$method($get);
 
         } catch (\Exception $ex) {
+            Log::get()->error('Exception: ' . $ex->getMessage());
+            Log::get()->error('Ex. Trace: ' . $ex->getTraceAsString());
             return $this->exception($ex);
         }
     }

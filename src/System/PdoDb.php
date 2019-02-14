@@ -21,6 +21,9 @@ class PdoDb implements DbInterface
 
     public function execute(string $query, array $param = []): bool
     {
+        Log::get()->debug('Query: ' . $query);
+        if (count($param) > 0)
+            Log::get()->debug('Param: ' . json_encode($param));
         $this->sth = $this->pdo->prepare($query);
         return $this->sth->execute($param);
     }
@@ -29,6 +32,7 @@ class PdoDb implements DbInterface
     {
         $row = $this->select1Row($query, $param);
         if (count($row) == 0) return '';
+        Log::get()->debug('GetValue: ' . $row[0]);
         return $row[0];
     }
 
@@ -37,6 +41,7 @@ class PdoDb implements DbInterface
         $rows = $this->selectRows($query, $param);
         if (count($rows) == 0) return [];
         if (!is_array($rows[0])) return [];
+        Log::get()->debug('Get1Row: ' . json_encode($rows[0]));
         return $rows[0];
     }
 
@@ -45,11 +50,14 @@ class PdoDb implements DbInterface
         $this->execute($query, $param);
         $arr = $this->sth->fetchAll(\PDO::FETCH_ASSOC);
         if ($arr == null) return [];
+        Log::get()->debug('GetRows: #' . count($arr));
         return $arr;
     }
 
     function getLastInsertId(): string
     {
-        return $this->pdo->lastInsertId();
+        $id = $this->pdo->lastInsertId();
+        Log::get()->debug('GetLastId: ' . $id);
+        return $id;
     }
 }

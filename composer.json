@@ -16,6 +16,7 @@
     },
     "require": {
         "ext-pdo": "*",
-        "ext-json": "*"
+        "ext-json": "*",
+        "monolog/monolog": "^1.24"
     }
 }
