@@ -31,4 +31,29 @@ class Program extends Record
         return $this;
     }
 
+    public function insert($userId, $taskId, $langId, $source) : bool
+    {
+        return $this->db->execute('
+            INSERT INTO program
+               SET userId = :userId,
+                   taskId = :taskId,
+                   langId = :langId,
+                   runkey = :runkey,
+                   points = 0,
+                   runs = runs + 1,
+                   source = :source,
+                   answer = ""',
+            [
+                'userId' => $userId,
+                'taskId' => $taskId,
+                'langId' => $langId,
+                'runkey' => '',
+                'points' => 0,
+                'runs' => 0,
+                'source' => $source,
+                'answer' => ''
+            ]);
+    }
+
+
 }
