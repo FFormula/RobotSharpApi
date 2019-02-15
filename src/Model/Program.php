@@ -42,16 +42,34 @@ class Program extends Record
                    points = 0,
                    runs = runs + 1,
                    source = :source,
-                   answer = ""',
+                   answer = NULL',
             [
                 'userId' => $userId,
                 'taskId' => $taskId,
                 'langId' => $langId,
                 'runkey' => '',
-                'points' => 0,
-                'runs' => 0,
-                'source' => $source,
-                'answer' => ''
+                'source' => $source
+            ]);
+    }
+
+    public function update($userId, $taskId, $langId, $source) : bool
+    {
+        return $this->db->execute('
+            UPDATE program
+               SET runkey = :runkey,
+                   points = 0,
+                   runs = runs + 1,
+                   source = :source,
+                   answer = NULL
+             WHERE userId = :userId
+               AND taskId = :taskId
+               AND langId = :langId',
+            [
+                'userId' => $userId,
+                'taskId' => $taskId,
+                'langId' => $langId,
+                'runkey' => '',
+                'source' => $source
             ]);
     }
 

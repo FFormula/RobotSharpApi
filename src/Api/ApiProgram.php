@@ -22,7 +22,7 @@ class ApiProgram extends Base
             $get['taskId'],
             $get['langId']);
 
-        if ($program->row['program'])
+        if ($program->row['source'])
             return $this->answer($program->row);
 
         $program->setDefaults(
@@ -47,11 +47,23 @@ class ApiProgram extends Base
         if (!$get['source'])
             return $this->error('Source not specified');
 
-        $program = (new Program())->insert(
+        $program = (new Program())->selectByKeys(
             $this->user->row['id'],
             $get['taskId'],
-            $get['langId'],
-            $get['source']);
+            $get['langId']);
+
+        if ($program->row['source'])
+            $program->update(
+                $this->user->row['id'],
+                $get['taskId'],
+                $get['langId'],
+                $get['source']);
+        else
+            $program->insert(
+                $this->user->row['id'],
+                $get['taskId'],
+                $get['langId'],
+                $get['source']);
         return $this->answer([]);
     }
 
