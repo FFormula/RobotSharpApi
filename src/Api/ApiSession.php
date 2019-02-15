@@ -68,12 +68,8 @@ class ApiSession extends Base
 
         return $this->answer([
             'token' => $login->row['token'],
-            'userId' => $user->row['id']
+            'userId' => $user->row['id'],
+            'partnerInfo' => $partner->row['info']
         ]);
-    }
-
-    public function logout($get) : string
-    {
-
     }
 }
