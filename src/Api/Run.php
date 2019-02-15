@@ -1,11 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: 308
- * Date: 2/5/2019
- * Time: 8:54 AM
- */
-
 namespace FFormula\RobotSharpApi\Api;
 
 use FFormula\RobotSharpApi\Model\Login;
@@ -47,7 +40,6 @@ class Run extends Base
             if (count($post) > 0)
                 $api->post = $post; // if any required
 
-            if (false)
             if (!($get['class'] == 'Session' &&
                   $get['method'] == 'login'))
             {
@@ -77,5 +69,4 @@ class Run extends Base
     {
         return preg_replace('/[^a-zA-Z0-9_]+/', '', $text);
     }
-
 }
