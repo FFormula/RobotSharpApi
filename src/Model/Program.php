@@ -15,9 +15,11 @@ class Program extends Record
         return $this;
     }
 
-    public function setDefaults($userId, $taskId, $langId) : Program
+    public function setDefaults($userId, $taskId, $langId, $source = '') : Program
     {
-        $lang = (new Lang())->selectByKey($langId);
+        if ($source == '')
+            $source = (new Lang())->selectByKey($langId)->row['source'];
+
         $this->row = [
             'userId' => $userId,
             'taskId' => $taskId,
@@ -25,7 +27,7 @@ class Program extends Record
             'runkey' => '',
             'points' => 0,
             'runs' => 0,
-            'source' => $lang->row['source'],
+            'source' => $source,
             'answer' => ''
         ];
         return $this;
@@ -33,44 +35,32 @@ class Program extends Record
 
     public function insert($userId, $taskId, $langId, $source) : bool
     {
+        $this->setDefaults($userId, $taskId, $langId, $source);
         return $this->db->execute('
-            INSERT INTO program
+       INSERT INTO program
                SET userId = :userId,
                    taskId = :taskId,
                    langId = :langId,
                    runkey = :runkey,
-                   points = 0,
-                   runs = runs + 1,
+                   points = :points,
+                   runs = :runs,
                    source = :source,
-                   answer = NULL',
-            [
-                'userId' => $userId,
-                'taskId' => $taskId,
-                'langId' => $langId,
-                'runkey' => '',
-                'source' => $source
-            ]);
+                   answer = :answer', $this->row);
     }
 
     public function update($userId, $taskId, $langId, $source) : bool
     {
+        $this->setDefaults($userId, $taskId, $langId, $source);
         return $this->db->execute('
             UPDATE program
                SET runkey = :runkey,
-                   points = 0,
-                   runs = runs + 1,
+                   points = :points,
+                   runs = :runs,
                    source = :source,
-                   answer = NULL
+                   answer = :answer
              WHERE userId = :userId
                AND taskId = :taskId
-               AND langId = :langId',
-            [
-                'userId' => $userId,
-                'taskId' => $taskId,
-                'langId' => $langId,
-                'runkey' => '',
-                'source' => $source
-            ]);
+               AND langId = :langId', $this->row);
     }
 
 

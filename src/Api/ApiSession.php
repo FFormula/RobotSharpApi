@@ -53,10 +53,7 @@ class ApiSession extends Base
 
         $user = (new User())->selectByEmail($get['email']);
         if (!$user->row['id'])
-            if (!$user->insert(['partnerId' => $partner->row['id'],
-                'name' => $get['name'],
-                'email' => $get['email'],
-                'status' => 'user']))
+            if (!$user->insert($partner->row['id'], $get['name'], $get['email']))
                 return $this->error('Error registering new user');
 
         if (!$login->deleteByUserId($user->row['id']))

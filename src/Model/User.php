@@ -22,11 +22,16 @@ class User extends Record
         return $this;
     }
 
-    public function insert($row) : bool
+    public function insert(string $partnerId, string $name, string $email) : bool
     {
-        $this->row = $row;
+        $this->row = [
+            'partnerId' => $partnerId,
+            'name' => $name,
+            'email' => $email,
+            'status' => 'user'
+        ];
         if (!$this->db->execute('
-            INSERT INTO user
+       INSERT INTO user
                SET partnerId = :partnerId,
                    name = :name,
                    email = :email,
