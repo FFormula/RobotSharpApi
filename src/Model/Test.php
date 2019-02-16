@@ -16,7 +16,15 @@ class Test extends Record
         return $this;
     }
 
-    function getRowsCount(string $text) : int
+    public function getAllTests(string $taskId) : array
+    {
+        return $this->db->selectRows('
+            SELECT taskId, testNr, fileIn, fileOut
+              FROM test     
+             WHERE taskId = ?', [$taskId]);
+    }
+
+    private function getRowsCount(string $text) : int
     {
         return 1 + substr_count(trim($text), "\n");
     }

@@ -1,3 +1,4 @@
 config/pdo.php
 vendor/
 log/
+robot/
