@@ -85,23 +85,24 @@ class ApiProgram extends Base
                 $get['langId'],
                 $get['source']);
 
-        $this->createRunFiles($program);
+        $program->createRunFiles();
 
         return $this->answer([
             'runkey' => $program->row['runkey']
         ]);
     }
 
-    public function createRunFiles(Program $program)
+    public function getRunAnswer(array $get)
     {
-        $path = 'c:/#Robot/data/';
-        $folder = $path . 'init/' . $program->row['runkey'] . '/';
-        mkdir($folder);
-        file_put_contents($folder . 'Program.' . $program->row['langId'], $program->row['source']);
-        $tests = (new Test())->getAllTests($program->row['taskId']);
-        foreach ($tests as $test)
-            file_put_contents($folder . 'test.' . $test['testNr'] . '.in', $test['fileIn']);
-        rename($folder, $path . 'wait/' . $program->row['runkey']);
+        if (!$get['runkey'])
+            return $this->error('runapi not specified');
+
+        $program = (new Program())->selectByRunkey($get['runkey']);
+
+        return $this->answer([
+            'answer' => json_decode($program->row['answer'])
+        ]);
     }
+
 
 }

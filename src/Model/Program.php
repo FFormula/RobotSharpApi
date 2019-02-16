@@ -10,6 +10,8 @@ namespace FFormula\RobotSharpApi\Model;
  */
 class Program extends Record
 {
+    var $path = 'c:/#Robot/data/';
+
     /**
      * @param $userId - номер пользователя
      * @param $taskId - номер задачи
@@ -82,7 +84,7 @@ class Program extends Record
                AND langId = :langId', $this->row);
     }
 
-    private function generateRunkey()
+    private function generateRunkey() : void
     {
         $this->row['runkey'] =
             date('ymd.His', time()) .
@@ -90,4 +92,67 @@ class Program extends Record
             '.' . $this->row['taskId'] .
             '.' . $this->row['langId'] ;
     }
+
+    public function createRunFiles() : void
+    {
+        $folder = $this->path . 'init/' . $this->row['runkey'] . '/';
+        mkdir($folder);
+        file_put_contents($folder . 'Program.' . $this->row['langId'], $this->row['source']);
+        $tests = (new Test())->getAllTests($this->row['taskId']);
+        foreach ($tests as $test)
+            file_put_contents($folder . 'test.' . $test['testNr'] . '.in', $test['fileIn']);
+        rename($folder, $this->path . 'wait/' . $this->row['runkey']);
+    }
+
+    public function selectByRunkey($runkey) : Program
+    {
+        $this->row = $this->db->select1Row('
+            SELECT userId, taskId, langId, runkey, answer
+              FROM program
+             WHERE runkey = ?', [ $runkey ]);
+
+        if ($this->row['taskId'])
+            if ($this->row['answer'] == '')
+            {
+                $this->row['answer'] = json_encode($this->readRunFiles());
+                $this->updateAnswer();
+            }
+        return $this;
+    }
+
+    public function readRunFiles() : array
+    {
+        $answer = [];
+        $folder = $this->path . 'done/' . $this->row['runkey'] . '/';
+        if (!file_exists($folder))
+            return $answer;
+        $answer['compiler'] = file_get_contents($folder . 'compiler.out');
+        for ($j = 0; $j < 20; $j ++)
+        {
+            $fileIn  = $folder . 'test.' . $j . '.in';
+            $fileOut = $folder . 'test.' . $j . '.out';
+            if (file_exists($fileOut))
+                $answer[$j] = [
+                    'fileIn'  => file_get_contents($fileIn),
+                    'fileOut' => file_get_contents($fileOut)
+                ];
+            else
+                break;
+        }
+        return $answer;
+    }
+
+    public function updateAnswer() : bool
+    {
+        return $this->db->execute('
+            UPDATE program
+               SET answer = :answer
+             WHERE runkey = :runkey',
+            [
+                'answer' => $this->row['answer'],
+                'runkey' => $this->row['runkey']
+            ]);
+    }
+
+
 }
