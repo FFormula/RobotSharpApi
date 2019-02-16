@@ -6,19 +6,27 @@ use FFormula\RobotSharpApi\Model\Login;
 use FFormula\RobotSharpApi\Model\Partner;
 use FFormula\RobotSharpApi\Model\User;
 
-class ApiSession extends Base
+/**
+ * Class ApiLogin - Регистрация и подключение пользователей
+ * @package FFormula\RobotSharpApi\Api
+ */
+class ApiLogin extends Base
 {
     /**
-     * @param $get array - user login info:
-     *      partner
-     *      email
-     *      time
-     *      sign
-     * @return string - generated token
-     *      token - login access token if correct
-     *      userId - joined/logged userId
+     * Получение token для нового/старого поользователя,
+     * который подключился в систему от указанного партнёра
+     * @param $get array - данные о пользователе с подписью партнёра
+     *      partner - код партнёра
+     *      email - электропочта пользователя
+     *      time - время в секундах момента генерации ссылки, действует 24 часа
+     *      sign - подпись партнёра, формируется по правилу:
+     *             md5($partnerName/$apikey/$time/$email)
+     *      name - имя нового пользователя для его регистрации
+     * @return string
+     *      token - сгенерированный token для подключения
+     *      userId - номер нового/подключённого пользователя
      */
-    public function login(array $get) : string
+    public function getUserToken(array $get) : string
     {
         if (!$get['partner'])
             return $this->error('partner not specified');

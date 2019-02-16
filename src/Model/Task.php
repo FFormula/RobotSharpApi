@@ -4,14 +4,20 @@ namespace FFormula\RobotSharpApi\Model;
 
 class Task extends Record
 {
-    public function selectById($taskId) : Task
+    public function selectById(string $taskId, string $dictId) : Task
     {
         $this->row = $this->db->select1Row('
             SELECT id, authorId, name, sectorId, sector, step,
                    caption, description
               FROM task
-         LEFT JOIN taskDict ON task.id = taskDict.taskId AND taskDict.dictId = "ru"
-             WHERE id = ?', [$taskId]);
+         LEFT JOIN taskDict 
+                ON task.id = taskDict.taskId 
+               AND taskDict.dictId = :dictId
+             WHERE id = :taskId',
+            [
+                'taskId' => $taskId,
+                'dictId' => $dictId
+            ]);
         return $this;
     }
 

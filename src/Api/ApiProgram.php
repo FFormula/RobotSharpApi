@@ -3,7 +3,6 @@
 namespace FFormula\RobotSharpApi\Api;
 
 use \FFormula\RobotSharpApi\Model\Program;
-use FFormula\RobotSharpApi\Model\Test;
 
 /**
  * Получение текста программы пользователя и запуск программы на проверку.
@@ -99,9 +98,7 @@ class ApiProgram extends Base
 
         $program = (new Program())->selectByRunkey($get['runkey']);
 
-        return $this->answer([
-            'answer' => json_decode($program->row['answer'])
-        ]);
+        return $this->answer((array)json_decode($program->row['answer']));
     }
 
 

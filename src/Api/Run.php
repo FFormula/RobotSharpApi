@@ -5,18 +5,25 @@ use FFormula\RobotSharpApi\Model\Login;
 use FFormula\RobotSharpApi\Model\User;
 use FFormula\RobotSharpApi\System\Log;
 
+/**
+ * Class Run - стартовый класс получения запроса для дальнейшей обработки
+ * @package FFormula\RobotSharpApi\Api
+ */
 class Run extends Base
 {
     /**
-     * @param $get array - All need params
-     *      token - logged user token
-     *      class - api class to call
-     *      method - api method to call
-     *      etc - other params
-     * @param $post array - some functions require post data
-     * @return string - result
+     * Проверка начальных данных,
+     * подключение нужного класса,
+     * вызов нужного метода и возвращение результата клиенту
+     * @param $get array -
+     *      token - token подключённого пользователя,
+     *              не указывается при вызове Login/getUserToken()
+     *      class - имя api-класса для работы
+     *      method - имя метода для вызова
+     *      ...   - остальные параметры, необходимые для работы метода
+     * @return string - ответ готовые для передачи клиенту
      */
-    public function start(array $get, array $post = []) : string
+    public function start(array $get) : string
     {
         try
         {
@@ -37,11 +44,8 @@ class Run extends Base
             if (!method_exists($class, $method))
                 return $this->error('method ' . $className . '->' . $method . ' not exists');
 
-            if (count($post) > 0)
-                $api->post = $post; // if any required
-
-            if (!($get['class'] == 'Session' &&
-                  $get['method'] == 'login'))
+            if (!($get['class'] == 'Login' &&
+                  $get['method'] == 'getUserToken'))
             {
                 if (!$get['token'])
                     return $this->error('Token not specified');
@@ -65,6 +69,11 @@ class Run extends Base
         }
     }
 
+    /**
+     * Оставляем в строке только буквенно-цифровые символы
+     * @param string $text - сообщение для обработки
+     * @return string - обработанная строка из буквенно-цифровых символов
+     */
     protected function az(string $text) : string
     {
         return preg_replace('/[^a-zA-Z0-9_]+/', '', $text);

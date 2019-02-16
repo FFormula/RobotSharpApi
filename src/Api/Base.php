@@ -5,38 +5,61 @@ namespace FFormula\RobotSharpApi\Api;
 use FFormula\RobotSharpApi\Model\User;
 use FFormula\RobotSharpApi\System\Log;
 
+/**
+ * Class Base Базовый класс для всех Api-классов
+ * Содержит методы для формирования результата и ошибок
+ * @package FFormula\RobotSharpApi\Api
+ */
 class Base
 {
-    /** @var string */
+    /** @var string - сформированный ответ в json-формате */
     var $answer;
-    /** @var array */
+    /** @var array - полученное сообщение об ошибке */
     var $error;
-    /** @var User */
+    /** @var User - данные подключившегося пользователя */
     var $user;
 
-    protected function answer(array $answer): string
+    /**
+     * формирование ответа без ошибок
+     * @param array $answer - массив с ответом для передачи клиенту
+     * @return string - готовый к выводу ответ
+     */
+    protected function answer(array $answer) : string
     {
         $this->error = 'ok';
         $this->answer = $answer;
         return $this->getResponse();
     }
 
-    protected function error(string $error): string
+    /**
+     * формирование ответа с текстом ошибки
+     * @param string $error - текст ошибки
+     * @return string - готовые к печати ответ
+     */
+    protected function error(string $error) : string
     {
         $this->error = $error;
         $this->answer = null;
         return $this->getResponse();
     }
 
-    protected function exception(\Exception $ex): string
+    /**
+     * формирование сообщения об ошибке по исключению
+     * @param \Exception $ex - исключение
+     * @return string - готовые к печати ответ
+     */
+    protected function exception(\Exception $ex) : string
     {
-        $this->error = 'Exception: ' . $ex->getMessage() .
-                       ' in ' . $ex->getTraceAsString();
-        $this->answer = null;
-        return $this->getResponse();
+        return $this->error(
+            'Exception: ' . $ex->getMessage() .
+                        ' in ' . $ex->getTraceAsString());
     }
 
-    protected function getResponse(): string
+    /**
+     * Формирование ответа для передачи клиенту
+     * @return string
+     */
+    protected function getResponse() : string
     {
         $response = [
             'error' => $this->error,
