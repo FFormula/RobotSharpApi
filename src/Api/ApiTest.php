@@ -8,7 +8,7 @@ use FFormula\RobotSharpApi\Model\Test;
  * Class ApiTest - Получение тестов к задачам
  * @package FFormula\RobotSharpApi\Api
  */
-class ApiTest extends Base
+class ApiTest extends Api
 {
     /**
      * Получение нулевого демо-теста к задаче
@@ -19,17 +19,18 @@ class ApiTest extends Base
      *          testNr,
      *          fileIn,
      *          fileOut
+     * @throws \Exception - в случае любой ошибки
      */
-    public function getDemoTest(array $get) : string
+    public function getDemoTest(array $get) : array
     {
         if (!$get['taskId'])
-            return $this->error('taskId not specified');
+            throw new \Exception('taskId not specified');
 
         $test = (new Test())->getDemoTest($get['taskId']);
 
         if (!$test->row['taskId'])
-            return $this->error('Demo test for this task ' . $get['taskId'] . ' not found');
+            throw new \Exception('Demo test for this task ' . $get['taskId'] . ' not found');
 
-        return $this->answer($test->row);
+        return $test->row;
     }
 }

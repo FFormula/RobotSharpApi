@@ -8,7 +8,7 @@ use \FFormula\RobotSharpApi\Model\Task;
  * Class ApiTask - получение информации о задачах
  * @package FFormula\RobotSharpApi\Api
  */
-class ApiTask extends Base
+class ApiTask extends Api
 {
     /**
      * получить условие задачи
@@ -24,20 +24,21 @@ class ApiTask extends Base
      *          step,
      *          caption - переведённое на нужный язык название
      *          description
+     * @throws \Exception - в случае любой ошибки
      */
-    public function getTask(array $get) : string
+    public function getTask(array $get) : array
     {
         if (!$get['taskId'])
-            return $this->error('taskId not specified');
+            throw new \Exception('taskId not specified');
 
         $dictId = 'ru';
 
         $task = (new Task())->selectById($get['taskId'], $dictId);
 
         if (!$task->row['id'])
-            return $this->error('task not found');
+            throw new \Exception('task not found');
 
-        return $this->answer($task->row);
+        return $task->row;
     }
 
     /**
@@ -49,14 +50,13 @@ class ApiTask extends Base
      *          authorId,
      *          caption,
      *          sector
+     * @throws \Exception - в случае любой ошибки
      */
-    public function getTaskList(array $get) : string
+    public function getTaskList(array $get) : array
     {
-        if ($get == []) return ''; // не знаю, как избавиться от варнинга, что параметр не используется :(
         $dictId = 'ru';
         $task = new Task();
-        $list = $task->getList($dictId);
-        return $this->answer($list);
+        return $task->getList($dictId);
     }
 
 }

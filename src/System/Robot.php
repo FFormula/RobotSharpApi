@@ -2,32 +2,58 @@
 
 namespace FFormula\RobotSharpApi\System;
 
+use FFormula\RobotSharpApi\Model\Program;
 use FFormula\RobotSharpApi\Model\Test;
 
 class Robot
 {
-    private $path;
+    private static $path = null;
 
-    public function __construct(array $config)
+    /**
+     * Статическая инициализация пути для последующего создания экземпляра
+     * @param array $config
+     */
+    public static function init(array $config)
     {
-        $this->path = $config['path'];
+        self::$path = $config['path'];
     }
 
-    public function createRunFiles() : void
+    /**
+     * Создание файлов для запуска проверки роботом
+     * @param Program $program - данные о программе
+     * @throws \Exception - в случчае любой ошибки
+     */
+    public function createRunFiles(Program $program) : void
     {
-        $folder = $this->path . 'init/' . $this->row['runkey'] . '/';
-        mkdir($folder);
-        file_put_contents($folder . 'Program.' . $this->row['langId'], $this->row['source']);
-        $tests = (new Test())->getAllTests($this->row['taskId']);
+        if (self::$path == null)
+            throw new \Exception('Robot path not specified');
+        $folder = self::$path . 'init/' . $program->row['runkey'] . '/';
+        if (!mkdir($folder))
+            throw new \Exception('Error creating folder ' . $folder);
+        $this->writeFile(
+            $folder . 'Program.' . $program->row['langId'],
+            $program->row['source']);
+        $tests = (new Test())->getAllTests($program->row['taskId']);
         foreach ($tests as $test)
-            file_put_contents($folder . 'test.' . $test['testNr'] . '.in', $test['fileIn']);
-        rename($folder, $this->path . 'wait/' . $this->row['runkey']);
+            $this->writeFile(
+                $folder . 'test.' . $test['testNr'] . '.in',
+                $test['fileIn']);
+        if (!rename($folder, self::$path . 'wait/' . $program->row['runkey']))
+            throw new \Exception('Error moving folder ' . $folder);
     }
 
-    public function readRunFiles() : array
+    /**
+     * @param Program $program
+     * @return array
+     * @throws \Exception
+     */
+    public function readTestFiles(Program $program) : array
     {
-        $answer = [];
-        $folder = $this->path . 'done/' . $this->row['runkey'] . '/';
+        $answer = [
+            'compiler' => '',
+            'tests' => []
+        ];
+        $folder = self::$path . 'done/' . $program->row['runkey'] . '/';
         if (!file_exists($folder))
             return $answer;
         $answer['compiler'] = file_get_contents($folder . 'compiler.out');
@@ -35,15 +61,42 @@ class Robot
         {
             $fileIn  = $folder . 'test.' . $j . '.in';
             $fileOut = $folder . 'test.' . $j . '.out';
-            if (file_exists($fileOut))
-                $answer[$j] = [
-                    'fileIn'  => file_get_contents($fileIn),
-                    'fileOut' => file_get_contents($fileOut)
+            if (file_exists($fileIn) &&
+                file_exists($fileOut))
+                $answer['tests'][$j] = [
+                    'fileIn'  => $this->readFile($fileIn),
+                    'fileOut' => $this->readFile($fileOut)
                 ];
             else
                 break;
         }
         return $answer;
+    }
+
+    /**
+     * Запись в файл с проверкой
+     * @param string $filename - имя файла
+     * @param string $text - что записать
+     * @throws \Exception - в случае ошибки
+     */
+    private function writeFile(string $filename, string $text) : void
+    {
+        if (FALSE === file_put_contents($filename, $text))
+            throw new \Exception('Error writing file ' . $filename);
+    }
+
+    /**
+     * Считывание файла с проверкой
+     * @param string $filename - имя файла
+     * @param string $text - что записать
+     * @throws \Exception - в случае ошибки
+     */
+    private function readFile(string $filename) : string
+    {
+        $text = file_get_contents($filename);
+        if (FALSE === $text)
+            throw new \Exception('Error reading file ' . $filename);
+        return $text;
     }
 
 }

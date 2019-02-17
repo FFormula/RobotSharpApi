@@ -10,7 +10,7 @@ use FFormula\RobotSharpApi\Model\User;
  * Class ApiLogin - Регистрация и подключение пользователей
  * @package FFormula\RobotSharpApi\Api
  */
-class ApiLogin extends Base
+class ApiLogin extends Api
 {
     /**
      * Получение token для нового/старого поользователя,
@@ -22,59 +22,60 @@ class ApiLogin extends Base
      *      sign - подпись партнёра, формируется по правилу:
      *             md5($partnerName/$apikey/$time/$email)
      *      name - имя нового пользователя для его регистрации
-     * @return string
+     * @return array
      *      token - сгенерированный token для подключения
      *      userId - номер нового/подключённого пользователя
+     * @throws \Exception - в случае любой ошибки
      */
-    public function getUserToken(array $get) : string
+    public function getUserToken(array $get) : array
     {
         if (!$get['partner'])
-            return $this->error('partner not specified');
+            throw new \Exception('partner not specified');
 
         if (!$get['email'])
-            return $this->error('email not specified');
+            throw new \Exception('email not specified');
 
         if (!$get['time'])
-            return $this->error('time not specified');
+            throw new \Exception('time not specified');
 
         if (!$get['sign'])
-            return $this->error('sign not specified');
+            throw new \Exception('sign not specified');
 
         $partner = (new Partner())->selectByName($get['partner']);
 
         if (!$partner->row['id'])
-            return $this->error('partner not found');
+            throw new \Exception('partner not found');
 
         if ($partner->row['status'] != '1')
-            return $this->error('partner disabled');
+            throw new \Exception('partner disabled');
 
         $login = new Login();
 
         if ($login->isTimeExpired($get['time']))
-            return $this->error('link time expired');
+            throw new \Exception('link time expired');
 
         $signHost = $login->getSign($partner->row['name'], $partner->row['apikey'],
             $get['time'], $get['email']);
 
         if ($get['sign'] != $signHost)
-            return $this->error('Signature not valid');
+            throw new \Exception('Signature not valid');
 
         $user = (new User())->selectByEmail($get['email']);
         if (!$user->row['id'])
             if (!$user->insert($partner->row['id'], $get['name'], $get['email']))
-                return $this->error('Error registering new user');
+                throw new \Exception('Error registering new user');
 
         if (!$login->deleteByUserId($user->row['id']))
-            return $this->error('Error deleting last session');
+            throw new \Exception('Error deleting last session');
 
         if (!$login->insert(['userId' => $user->row['id'],
             'partnerId' => $partner->row['id']]))
-            return $this->error('Error inserting token');
+            throw new \Exception('Error inserting token');
 
-        return $this->answer([
+        return [
             'token' => $login->row['token'],
             'userId' => $user->row['id'],
             'partnerInfo' => $partner->row['info']
-        ]);
+        ];
     }
 }

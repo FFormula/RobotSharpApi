@@ -9,32 +9,33 @@ use \FFormula\RobotSharpApi\Model\Program;
  * Class ApiProgram
  * @package FFormula\RobotSharpApi\Api
  */
-class ApiProgram extends Base
+class ApiProgram extends Api
 {
     /**
      * Получение текста программы пользователя или её заготовки
      * @param array $get массив начальных данных
      *          taskId - номер задачи
      *          langId - язык программирования
-     * @return string - исходный текст программы
+     * @return array - исходный текст программы
+     * @throws \Exception - в случае любой ошибки
      */
-    public function getProgram(array $get) : string
+    public function getProgram(array $get) : array
     {
         if (!$this->user->row['id'])
-            return $this->error('No user id');
+            throw new \Exception('No user id');
 
         if (!$get['taskId'])
-            return $this->error('taskId not specified');
+            throw new \Exception('taskId not specified');
 
         if (!$get['langId'])
-            return $this->error('langId not specified');
+            throw new \Exception('langId not specified');
 
         $program = (new Program())->getUserSource(
             $this->user->row['id'],
             $get['taskId'],
             $get['langId']);
 
-        return $this->answer($program->row);
+        return $program->row;
     }
 
     /**
@@ -43,22 +44,23 @@ class ApiProgram extends Base
      *          taskId - номер задачи
      *          langId - язык программирования
      *          source - исходный текст для запуска на проверку
-     * @return string - возвращает созданный $runkey для запускаемой программы
+     * @return array - возвращает созданный $runkey для запускаемой программы
      *                  который используется для получения результатов тестирования
+     * @throws \Exception - в случае любой ошибки
      */
-    public function runProgram(array $get) : string
+    public function runProgram(array $get) : array
     {
         if (!$this->user->row['id'])
-            return $this->error('No user id');
+            throw new \Exception('No user id');
 
         if (!$get['taskId'])
-            return $this->error('taskId not specified');
+            throw new \Exception('taskId not specified');
 
         if (!$get['langId'])
-            return $this->error('langId not specified');
+            throw new \Exception('langId not specified');
 
         if (!$get['source'])
-            return $this->error('Source not specified');
+            throw new \Exception('Source not specified');
 
         $program = (new Program())->saveSource(
             $this->user->row['id'],
@@ -66,21 +68,29 @@ class ApiProgram extends Base
             $get['langId'],
             $get['source']);
 
-        $program->createRunFiles();
+        // $program->createRunFiles();
 
-        return $this->answer([
+        return [
             'runkey' => $program->row['runkey']
-        ]);
+        ];
     }
 
-    public function getRunResults(array $get)
+    /**
+     * Проверка и получение результатов тестирования программы
+     * @param array $get - runkey запущенной программы
+     * @return array - результат тестирования,
+     *          compiler
+     *          tests
+     * @throws \Exception - в случае любой ошибки
+     */
+    public function getRunResults(array $get) : array
     {
         if (!$get['runkey'])
-            return $this->error('runapi not specified');
+            throw new \Exception('runapi not specified');
 
         $program = (new Program())->selectByRunkey($get['runkey']);
 
-        return $this->answer((array)json_decode($program->row['answer']));
+        return $program->row;
     }
 
 

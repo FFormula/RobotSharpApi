@@ -18,10 +18,10 @@ System\Log::set('RobotWeb', $path . '/log/api.log');
 System\Log::get()->info('IP: ' . $_SERVER['REMOTE_ADDR'] . ' ====================================');
 System\Log::get()->info('Request: ' . $_SERVER['REQUEST_URI'] . $_SERVER['QUERY_STRING']);
 
-System\DB::set(
-    new System\PdoDb(
-        require $path . 'config/pdo.php'));
+System\DB::set(new System\PdoDb(require $path . 'config/pdo.php'));
+
+System\Robot::init(require $path . 'config/robot.php');
 
 $run = new FFormula\RobotSharpApi\Api\Run();
-$run->robot = new System\Robot(require $path . 'config/robot.php');
+
 echo $run->start($_REQUEST);
