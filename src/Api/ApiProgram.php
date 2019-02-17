@@ -69,8 +69,7 @@ class ApiProgram extends Api
             $get['langId'],
             $get['source']);
 
-        $robot = new Robot();
-        $robot->createRunFiles($program);
+        (new Robot())->createRunFiles($program);
 
         return [
             'runkey' => $program->row['runkey']
@@ -88,12 +87,25 @@ class ApiProgram extends Api
     public function getRunResults(array $get) : array
     {
         if (!$get['runkey'])
-            throw new \Exception('runapi not specified');
+            throw new \Exception('runkey not specified');
 
         $program = (new Program())->selectByRunkey($get['runkey']);
 
+        if (!$program->row['taskId'])
+            throw new \Exception('Not found run program by this runkey');
+
+        if ($program->row['userId'] != $this->user->row['id'])
+            throw new \Exception('This program was run by other user');
+
+        if ($program->row['compiler'])
+            return [
+                'compiler' => $program->row['compiler'],
+                'tests' => json_decode($program->row['tests'])
+            ];
+
+        $run = (new Robot())->readTestFiles($get['runkey']);
+        $program->updatePoints($run['compiler'], $run['tests']);
+
         return $program->row;
     }
-
-
 }

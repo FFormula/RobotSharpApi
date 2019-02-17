@@ -68,7 +68,7 @@ class Run
             throw new \Exception('method ' . $className . '->' . $method . ' not exists');
 
         if (!($get['class'] == 'Login' &&
-            $get['method'] == 'getUserToken'))
+              $get['method'] == 'getUserToken'))
         {
             if (!$get['token'])
                 throw new \Exception('Token not specified');

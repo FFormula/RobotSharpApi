@@ -13,6 +13,7 @@ use FFormula\RobotSharpApi\Model\Test;
 class Robot
 {
     private static $path = null;
+    private $runkey;
 
     /**
      * Статическая инициализация пути для последующего создания экземпляра
@@ -30,21 +31,24 @@ class Robot
      */
     public function createRunFiles(Program $program) : void
     {
-        if (self::$path == null)
-            throw new \Exception('Robot path not specified');
-        $folder = self::$path . 'init/' . $program->row['runkey'] . '/';
-        if (!mkdir($folder))
-            throw new \Exception('Error creating folder ' . $folder);
+        $this->setRunkey($program->row['runkey']);
+
+        $folder = self::$path . 'init/' . $this->runkey . '/';
+
+        $this->createFolder($folder);
+
         $this->writeFile(
             $folder . 'Program.' . $program->row['langId'],
             $program->row['source']);
+
         $tests = (new Test())->getAllTests($program->row['taskId']);
+
         foreach ($tests as $test)
             $this->writeFile(
                 $folder . 'test.' . $test['testNr'] . '.in',
                 $test['fileIn']);
-        if (!rename($folder, self::$path . 'wait/' . $program->row['runkey']))
-            throw new \Exception('Error moving folder ' . $folder);
+
+        $this->moveFolder($folder, self::$path . 'wait/' . $this->runkey);
     }
 
     /**
@@ -53,30 +57,90 @@ class Robot
      * @return array
      * @throws \Exception
      */
-    public function readTestFiles(Program $program) : array
+    public function readTestFiles(string $runkey) : array
     {
-        $answer = [
-            'compiler' => '',
-            'tests' => []
-        ];
-        $folder = self::$path . 'done/' . $program->row['runkey'] . '/';
+        $this->setRunkey($runkey);
+
+        $folder = self::$path . 'done/' . $this->runkey . '/';
+
         if (!file_exists($folder))
-            return $answer;
-        $answer['compiler'] = file_get_contents($folder . 'compiler.out');
+            throw new \Exception('Results for this runkey not present');
+
+        $answer['compiler'] = $this->readCompiler($folder);
+        $answer['tests'] = $this->readTests($folder);
+
+        $this->moveFolder($folder, self::$path . 'drop/' . $this->runkey);
+        return $answer;
+    }
+
+    /**
+     * @param string $runkey
+     * @throws \Exception
+     */
+    private function setRunkey(string $runkey) : void
+    {
+        if (self::$path == null)
+            throw new \Exception('Robot path not specified');
+        if ($runkey == '')
+            throw new \Exception('Runkey not specified');
+        $this->runkey = $this->az($runkey);
+        if (strlen($this->runkey) < 10 || strlen($this->runkey) > 30)
+            throw new \Exception('Invalid runkey');
+    }
+
+    /**
+     * @param string $folder
+     * @return string
+     * @throws \Exception
+     */
+    private function readCompiler(string $folder) : string
+    {
+        return $this->readFile($folder . 'compiler.out');
+    }
+
+    /**
+     * @param $folder
+     * @return array
+     * @throws \Exception
+     */
+    private function readTests(string $folder) : array
+    {
+        $tests = [];
         for ($j = 0; $j < 20; $j ++)
         {
             $fileIn  = $folder . 'test.' . $j . '.in';
             $fileOut = $folder . 'test.' . $j . '.out';
             if (file_exists($fileIn) &&
                 file_exists($fileOut))
-                $answer['tests'][$j] = [
+                $tests[$j] = [
                     'fileIn'  => $this->readFile($fileIn),
                     'fileOut' => $this->readFile($fileOut)
                 ];
             else
                 break;
         }
-        return $answer;
+        return $tests;
+    }
+
+    /**
+     * @param string $folder
+     * @throws \Exception
+     */
+    private function createFolder(string $folder) : void
+    {
+        if (!mkdir($folder))
+            throw new \Exception('Error creating folder ' . $folder);
+    }
+
+    /**
+     * @param string $from
+     * @param string $to
+     * @throws \Exception
+     */
+    private function moveFolder(string $from, string $to) : void
+    {
+        if (!rename($from, $to))
+            throw new \Exception('Error moving folder ' . $from . ' to ' . $to);
     }
 
     /**
@@ -103,6 +167,11 @@ class Robot
         if (FALSE === $text)
             throw new \Exception('Error reading file ' . $filename);
         return $text;
+    }
+
+    protected function az(string $text) : string
+    {
+        return preg_replace('/[^.a-zA-Z0-9_]+/', '', $text);
     }
 
 }

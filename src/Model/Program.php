@@ -2,6 +2,8 @@
 
 namespace FFormula\RobotSharpApi\Model;
 
+use FFormula\RobotSharpApi\System\Log;
+
 /**
  * Работа с таблицей Program - список всех программ
  * пользователей с результатами последнего запуска на проверку
@@ -10,14 +12,13 @@ namespace FFormula\RobotSharpApi\Model;
  */
 class Program extends Record
 {
-    var $path = 'c:/#Robot/data/';
-
     /**
      * Получить исходный теекст и результаты проверки решения пользователя
      * @param string $userId - номер пользователя
      * @param string $taskId - номер задачи
      * @param string $langId - язык программирования
      * @return Program - этот экземпляр с данными в row
+     * @throws \Exception - при любой ошибке
      */
     public function getUserSource(string $userId, string $taskId, string $langId) : Program
     {
@@ -42,6 +43,7 @@ class Program extends Record
      * Получить результаты тестирования по ключу запуска
      * @param string $runkey - уникальный ключ запуска
      * @return Program - этот экземпляр с данными в row
+     * @throws \Exception - при любой ошибке
      */
     public function selectByRunkey(string $runkey) : Program
     {
@@ -61,6 +63,7 @@ class Program extends Record
      * @param string $langId - на каком языкп программирования
      * @param string $source - решил и прислал этот исходный код на проверку
      * @return Program - этот экземпляр с данными в row
+     * @throws \Exception - при любой ошибке
      */
     public function saveSource(string $userId, string $taskId, string $langId, string $source) : Program
     {
@@ -73,6 +76,50 @@ class Program extends Record
             $this->insert();
 
         return $this;
+    }
+
+    /**
+     * @param string $compiler
+     * @param array $tests
+     * @throws \Exception - при любой ошибке
+     */
+    public function updatePoints(string $compiler, array $tests) : void
+    {
+        $this->row['compiler'] = $compiler;
+        $this->row['tests'] = json_encode($tests);
+        $this->row['runs'] ++;
+
+        if ($compiler == '')
+        {
+            $baseTests = (new Test())->getAllTests($this->row['taskId']);
+            $this->row['points'] = $this->calculatePoints($baseTests, $tests);
+        }
+
+        $this->update();
+    }
+
+    private function calculatePoints(array $baseTests, array $userTests) : int
+    {
+        $total = 0;
+        $right = 0;
+        foreach ($baseTests as $baseTest)
+        {
+            $total ++;
+            $testNr = $baseTest['testNr'];
+            $userFileOut = trim($userTests[$testNr]['fileOut']);
+            $baseFileOut = trim($baseTest          ['fileOut']);
+            if ($userFileOut == $baseFileOut)
+                $right ++;
+            Log::get()->debug($userFileOut);
+            Log::get()->debug($baseFileOut);
+            Log::get()->debug('Right: ' . $right);
+        }
+        if ($total > 0)
+            $points = ceil(100 * $right / $total);
+        else
+            $points = 100;
+        Log::get()->debug('Points: ' . $points);
+        return $points;
     }
 
     /**
@@ -101,6 +148,7 @@ class Program extends Record
     /**
      * Проверка наличия записи по ключевым полям
      * @return bool - True если запись есть, False - если нет
+     * @throws \Exception - при любой ошибке
      */
     private function existsRecord() : bool
     {
@@ -120,6 +168,7 @@ class Program extends Record
     /**
      * Добавление новой записи
      * @return bool - удачно ли добавлено
+     * @throws \Exception - при любой ошибке
      */
     private function insert() : bool
     {
@@ -139,6 +188,7 @@ class Program extends Record
     /**
      * Обновление записи
      * @return bool
+     * @throws \Exception - при любой ошибке
      */
     private function update() : bool
     {
