@@ -2,7 +2,8 @@
 
 namespace FFormula\RobotSharpApi\Api;
 
-use \FFormula\RobotSharpApi\Model\Program;
+use FFormula\RobotSharpApi\Model\Program;
+use FFormula\RobotSharpApi\System\Robot;
 
 /**
  * Получение текста программы пользователя и запуск программы на проверку.
@@ -68,7 +69,8 @@ class ApiProgram extends Api
             $get['langId'],
             $get['source']);
 
-        // $program->createRunFiles();
+        $robot = new Robot();
+        $robot->createRunFiles($program);
 
         return [
             'runkey' => $program->row['runkey']

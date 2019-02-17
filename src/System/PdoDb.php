@@ -32,8 +32,8 @@ class PdoDb implements DbInterface
     {
         $row = $this->select1Row($query, $param);
         if (count($row) == 0) return '';
-        Log::get()->debug('GetValue: ' . $row[0]);
-        return $row[0];
+        foreach ($row as $value)
+            return $value;
     }
 
     public function select1Row(string $query, array $param = []): array

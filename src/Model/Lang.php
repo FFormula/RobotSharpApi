@@ -2,6 +2,10 @@
 
 namespace FFormula\RobotSharpApi\Model;
 
+/**
+ * Class Lang - Работа с таблицей Lang
+ * @package FFormula\RobotSharpApi\Model
+ */
 class Lang extends Record
 {
     public function selectByKey(string $langId) : Lang

@@ -1,9 +1,7 @@
 <?php
-namespace FFormula\RobotSharpApi\Api;
+namespace FFormula\RobotSharpApi\System;
 
-use FFormula\RobotSharpApi\Model\Login;
-use FFormula\RobotSharpApi\Model\User;
-use FFormula\RobotSharpApi\System\Log;
+use FFormula\RobotSharpApi\Api\Api;
 
 /**
  * Class Run - стартовый класс получения запроса для дальнейшей обработки
@@ -62,6 +60,7 @@ class Run
         if (!class_exists($class))
             throw new \Exception('Api-class ' . $className . ' does not exists');
 
+        /** @var Api $api */
         $api = new $class();
 
         $method = $this->az($get['method']);
@@ -74,29 +73,10 @@ class Run
             if (!$get['token'])
                 throw new \Exception('Token not specified');
 
-            $api->user = $this->getUserByToken($get['token']);
+            $api->setUserByToken($get['token']);
         }
 
         return $api->$method($get);
-    }
-
-    /**
-     * Получение записи о пользователе по token-у с проверкой его наличия
-     * @param string $token
-     * @return User
-     * @throws \Exception
-     */
-    private function getUserByToken(string $token) : User
-    {
-        $login = (new Login())->selectByToken($token);
-        if (!$login->row['userId'])
-            throw new \Exception('Token not found or expired');
-
-        $user = (new User())->selectById($login->row['userId']);
-        if (!$user->row['id'])
-            throw new \Exception('User not found');
-
-        return $user;
     }
 
     /**
