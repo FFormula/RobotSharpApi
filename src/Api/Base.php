@@ -4,6 +4,7 @@ namespace FFormula\RobotSharpApi\Api;
 
 use FFormula\RobotSharpApi\Model\User;
 use FFormula\RobotSharpApi\System\Log;
+use FFormula\RobotSharpApi\System\Robot;
 
 /**
  * Class Base Базовый класс для всех Api-классов
@@ -13,11 +14,13 @@ use FFormula\RobotSharpApi\System\Log;
 class Base
 {
     /** @var string - сформированный ответ в json-формате */
-    var $answer;
+    private $answer;
     /** @var array - полученное сообщение об ошибке */
-    var $error;
+    private $error;
     /** @var User - данные подключившегося пользователя */
-    var $user;
+    protected $user;
+    /** @var Robot - для запуска робота и получения результатов тестирования  */
+    public $robot;
 
     /**
      * формирование ответа без ошибок

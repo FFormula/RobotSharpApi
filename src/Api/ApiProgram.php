@@ -29,16 +29,10 @@ class ApiProgram extends Base
         if (!$get['langId'])
             return $this->error('langId not specified');
 
-        $program = (new Program())->selectByKeys(
+        $program = (new Program())->getUserSource(
             $this->user->row['id'],
             $get['taskId'],
             $get['langId']);
-
-        if (!$program->row['source'])
-            $program->setDefaults(
-                $this->user->row['id'],
-                $get['taskId'],
-                $get['langId']);
 
         return $this->answer($program->row);
     }
@@ -66,23 +60,11 @@ class ApiProgram extends Base
         if (!$get['source'])
             return $this->error('Source not specified');
 
-        $program = (new Program())->selectByKeys(
+        $program = (new Program())->saveSource(
             $this->user->row['id'],
             $get['taskId'],
-            $get['langId']);
-
-        if ($program->row['source'])
-            $program->update(
-                $this->user->row['id'],
-                $get['taskId'],
-                $get['langId'],
-                $get['source']);
-        else
-            $program->insert(
-                $this->user->row['id'],
-                $get['taskId'],
-                $get['langId'],
-                $get['source']);
+            $get['langId'],
+            $get['source']);
 
         $program->createRunFiles();
 
@@ -91,7 +73,7 @@ class ApiProgram extends Base
         ]);
     }
 
-    public function getRunAnswer(array $get)
+    public function getRunResults(array $get)
     {
         if (!$get['runkey'])
             return $this->error('runapi not specified');

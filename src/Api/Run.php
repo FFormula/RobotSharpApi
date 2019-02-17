@@ -60,6 +60,8 @@ class Run extends Base
                     return $this->error('User not found');
             }
 
+            $api->robot = $this->robot;
+
             return $api->$method($get);
 
         } catch (\Exception $ex) {
