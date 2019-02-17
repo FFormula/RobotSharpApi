@@ -6,7 +6,7 @@ use \Monolog\Logger;
 use \Monolog\Handler\StreamHandler;
 
 /**
- * Class Log - Создание статического логгера и его получение
+ * Class Log - Статическая обёртка для создания и получения логгера
  * @package FFormula\RobotSharpWeb\System
  */
 class Log

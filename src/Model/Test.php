@@ -2,8 +2,17 @@
 
 namespace FFormula\RobotSharpApi\Model;
 
+/**
+ * Class Test - Работа с таблицей Test
+ * @package FFormula\RobotSharpApi\Model
+ */
 class Test extends Record
 {
+    /**
+     * @param string $taskId
+     * @return Test
+     * @throws \Exception
+     */
     public function getDemoTest(string $taskId) : Test
     {
         $this->row = $this->db->select1Row('
@@ -16,6 +25,11 @@ class Test extends Record
         return $this;
     }
 
+    /**
+     * @param string $taskId
+     * @return array
+     * @throws \Exception
+     */
     public function getAllTests(string $taskId) : array
     {
         return $this->db->selectRows('

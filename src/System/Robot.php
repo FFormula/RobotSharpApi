@@ -5,6 +5,11 @@ namespace FFormula\RobotSharpApi\System;
 use FFormula\RobotSharpApi\Model\Program;
 use FFormula\RobotSharpApi\Model\Test;
 
+/**
+ * Class Robot - Подготовка каталога для запуска программ
+ * и считывание результатов проверки из файлов
+ * @package FFormula\RobotSharpApi\System
+ */
 class Robot
 {
     private static $path = null;
@@ -43,6 +48,7 @@ class Robot
     }
 
     /**
+     * Считать результат тестирования из созданных роботом файлов
      * @param Program $program
      * @return array
      * @throws \Exception

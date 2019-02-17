@@ -1,9 +1,18 @@
 <?php
 namespace FFormula\RobotSharpApi\Model;
 
+/**
+ * Class Login - Работа с таблицей Login
+ * @package FFormula\RobotSharpApi\Model
+ */
 class Login extends Record
 {
-    public function selectByToken($token) : Login
+    /**
+     * @param string $token
+     * @return Login
+     * @throws \Exception
+     */
+    public function selectByToken(string $token) : Login
     {
         $this->deleteExpired();
         $this->row = $this->db->select1Row('
@@ -13,21 +22,34 @@ class Login extends Record
         return $this;
     }
 
-    public function isTimeExpired($timeUser) : bool
+    /**
+     * @param int $timeUser
+     * @return bool
+     */
+    public function isTimeExpired(int $timeUser) : bool
     {
         $timeHost = time();
         return abs($timeUser - $timeHost) > 24*3600;
     }
 
-    public function getSign($partnerName, $apikey, $time, $email) : string
+    /**
+     * @param string $partnerName
+     * @param string $apikey
+     * @param string $time
+     * @param string $email
+     * @return string
+     */
+    public function getSign(string $partnerName, string $apikey, string $time, string $email) : string
     {
-        return md5($partnerName . '/' .
-            $apikey . '/' .
-            $time . '/' .
-            $email);
+        return md5($partnerName . '/' . $apikey . '/' . $time . '/' . $email);
     }
 
-    public function insert($row) : bool
+    /**
+     * @param array $row
+     * @return bool
+     * @throws \Exception
+     */
+    public function insert(array $row) : bool
     {
         $row['token'] = $this->getRandomString();
         $row['expired'] = time() + 24*3600;
@@ -40,13 +62,21 @@ class Login extends Record
                    expired = :expired', $this->row);
     }
 
-    public function deleteExpired()
+    /**
+     * @throws \Exception
+     */
+    public function deleteExpired() : void
     {
         $this->db->execute('
             DELETE FROM login 
              WHERE expired < ?', [time()]);
     }
 
+    /**
+     * @param string $userId
+     * @return bool
+     * @throws \Exception
+     */
     public function deleteByUserId(string $userId) : bool
     {
         return $this->db->execute('
@@ -54,6 +84,9 @@ class Login extends Record
              WHERE userId = ?', [$userId]);
     }
 
+    /**
+     * @return string
+     */
     private function getRandomString() : string
     {
         return substr(str_shuffle(

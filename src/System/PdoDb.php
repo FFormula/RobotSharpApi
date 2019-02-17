@@ -2,6 +2,10 @@
 
 namespace FFormula\RobotSharpApi\System;
 
+/**
+ * Class PdoDb - Вариант реализации DbInterface на основе PDO
+ * @package FFormula\RobotSharpApi\System
+ */
 class PdoDb implements DbInterface
 {
     /** @var \PDO */
@@ -15,8 +19,7 @@ class PdoDb implements DbInterface
         $this->pdo = new \PDO($config['dsn'],
                               $config['user'],
                               $config['pass']);
-        $this->pdo->setAttribute(
-            \PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
+        $this->pdo->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
     }
 
     public function execute(string $query, array $param = []): bool
@@ -31,9 +34,9 @@ class PdoDb implements DbInterface
     public function selectValue(string $query, array $param = []): string
     {
         $row = $this->select1Row($query, $param);
-        if (count($row) == 0) return '';
         foreach ($row as $value)
             return $value;
+        return '';
     }
 
     public function select1Row(string $query, array $param = []): array

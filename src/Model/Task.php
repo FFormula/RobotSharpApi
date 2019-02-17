@@ -2,8 +2,18 @@
 
 namespace FFormula\RobotSharpApi\Model;
 
+/**
+ * Class Task - Работа с таблицей Task
+ * @package FFormula\RobotSharpApi\Model
+ */
 class Task extends Record
 {
+    /**
+     * @param string $taskId
+     * @param string $dictId
+     * @return Task
+     * @throws \Exception
+     */
     public function selectById(string $taskId, string $dictId) : Task
     {
         $this->row = $this->db->select1Row('
@@ -21,7 +31,12 @@ class Task extends Record
         return $this;
     }
 
-    public function getList($dictId) : array
+    /**
+     * @param string $dictId
+     * @return array
+     * @throws \Exception
+     */
+    public function getList(string $dictId) : array
     {
         return $this->db->selectRows('
             SELECT task.id, authorId, caption, sector
