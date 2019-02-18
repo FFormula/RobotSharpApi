@@ -56,7 +56,7 @@ class ApiTask extends Api
     {
         $dictId = 'ru';
         $task = new Task();
-        return $task->getList($dictId);
+        return $task->getList($dictId, $this->user->row['id']);
     }
 
 }

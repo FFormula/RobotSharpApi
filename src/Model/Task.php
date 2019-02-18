@@ -36,15 +36,19 @@ class Task extends Record
      * @return array
      * @throws \Exception
      */
-    public function getList(string $dictId) : array
+    public function getList(string $dictId, string $userId) : array
     {
         return $this->db->selectRows('
-            SELECT task.id, authorId, caption, sector
+            SELECT task.id, authorId, caption, sector, MAX(points) as points
               FROM task
-              JOIN taskDict 
+         LEFT JOIN taskDict 
                 ON task.id = taskDict.taskId
                AND dictId = ?
-          ORDER BY task.step', [ $dictId ]);
+         LEFT JOIN program 
+                ON task.id = program.taskId
+               AND program.userId = ?
+          GROUP BY task.id
+          ORDER BY task.step', [ $dictId, $userId ]);
     }
 
 }
