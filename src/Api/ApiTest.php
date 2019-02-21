@@ -33,4 +33,19 @@ class ApiTest extends Api
 
         return $test->row;
     }
+
+    /**
+     * @param array $get
+     * @return array
+     * @throws \Exception
+     */
+    public function getAllTests(array $get) : array
+    {
+        if (!$get['taskId'])
+            throw new \Exception('taskId not specified');
+
+        $tests = (new Test())->getAllTests($get['taskId']);
+
+        return $tests;
+    }
 }
