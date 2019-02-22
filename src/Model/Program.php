@@ -28,7 +28,7 @@ class Program extends Record
             $this->row = $this->db->select1Row('
                 SELECT userId, taskId, langId, 
                        runkey, points, runs, 
-                       source, compiler, tests
+                       source, compiler, tests, status
                   FROM program
                  WHERE userId = ?
                    AND taskId = ?
@@ -50,7 +50,7 @@ class Program extends Record
         $this->row = $this->db->select1Row('
             SELECT userId, taskId, langId, 
                    runkey, points, runs, 
-                   source, compiler, tests
+                   source, compiler, tests, status
               FROM program
              WHERE runkey = ?', [ $runkey ]);
         return $this;
@@ -69,7 +69,8 @@ class Program extends Record
     {
         $this->setDefaults($userId, $taskId, $langId, $source);
         $this->generateRunkey();
-
+        $this->row['status'] = 'run';
+        
         if ($this->existsRecord()) // если запись уже есть
             $this->update();      // просто обновляем
         else                     // иначе - добавляем новую запись
@@ -93,7 +94,9 @@ class Program extends Record
         {
             $baseTests = (new Test())->getAllTests($this->row['taskId']);
             $this->row['points'] = $this->calculatePoints($baseTests, $tests);
-        }
+            $this->row['status'] = 'tests';
+        } else
+            $this->row['status'] = 'compiler';
 
         $this->update();
     }
@@ -141,7 +144,8 @@ class Program extends Record
             'runs'   => 0,
             'source' => $source,
             'compiler' => '',
-            'tests' => ''
+            'tests' => '',
+            'status' => 'new'
         ];
     }
 
@@ -182,7 +186,8 @@ class Program extends Record
                    runs = :runs,
                    source = :source,
                    compiler = :compiler,
-                   tests = :tests', $this->row);
+                   tests = :tests,
+                   status = :status', $this->row);
     }
 
     /**
@@ -199,7 +204,8 @@ class Program extends Record
                    runs = :runs,
                    source = :source,
                    compiler = :compiler,
-                   tests = :tests
+                   tests = :tests,
+                   status = :status
              WHERE userId = :userId
                AND taskId = :taskId
                AND langId = :langId', $this->row);
