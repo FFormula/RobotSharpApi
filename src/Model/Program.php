@@ -70,7 +70,7 @@ class Program extends Record
         $this->setDefaults($userId, $taskId, $langId, $source);
         $this->generateRunkey();
         $this->row['status'] = 'run';
-        
+
         if ($this->existsRecord()) // если запись уже есть
             $this->update();      // просто обновляем
         else                     // иначе - добавляем новую запись
@@ -87,7 +87,7 @@ class Program extends Record
     public function updatePoints(string $compiler, array $tests) : void
     {
         $this->row['compiler'] = $compiler;
-        $this->row['tests'] = json_encode($tests);
+        $this->row['tests'] = '';
         $this->row['runs'] ++;
 
         if ($compiler == '')
@@ -95,27 +95,28 @@ class Program extends Record
             $baseTests = (new Test())->getAllTests($this->row['taskId']);
             $this->row['points'] = $this->calculatePoints($baseTests, $tests);
             $this->row['status'] = 'tests';
+            $this->row['tests'] = json_encode($tests);
         } else
             $this->row['status'] = 'compiler';
 
         $this->update();
     }
 
-    private function calculatePoints(array $baseTests, array $userTests) : int
+    private function calculatePoints(array $baseTests, array &$userTests) : int
     {
         $total = 0;
         $right = 0;
         foreach ($baseTests as $baseTest)
         {
             $total ++;
-            $testNr = $baseTest['testNr'];
-            $userFileOut = trim($userTests[$testNr]['fileOut']);
-            $baseFileOut = trim($baseTest          ['fileOut']);
-            if ($userFileOut == $baseFileOut)
-                $right ++;
-            Log::get()->debug($userFileOut);
-            Log::get()->debug($baseFileOut);
-            Log::get()->debug('Right: ' . $right);
+            $nr = $baseTest['testNr'];
+            $userTests[$nr]['testNr'] = $nr;
+            if ($this->compareTests($userTests[$nr]['fileOut'], $baseTest['fileOut']))
+            {
+                $right++;
+                $userTests[$nr]['valid'] = true;
+            } else
+                $userTests[$nr]['valid'] = false;
         }
         if ($total > 0)
             $points = ceil(100 * $right / $total);
@@ -123,6 +124,15 @@ class Program extends Record
             $points = 100;
         Log::get()->debug('Points: ' . $points);
         return $points;
+    }
+
+    private function compareTests(string $baseFileOut, string $userFileOut) : bool
+    {
+        Log::get()->debug($userFileOut);
+        Log::get()->debug($baseFileOut);
+        $result = trim($userFileOut) == trim($baseFileOut);
+        Log::get()->debug($result ? "VALID" : "ERROR");
+        return $result;
     }
 
     /**

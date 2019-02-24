@@ -59,16 +59,22 @@ class Robot
      */
     public function readTestFiles(string $runkey) : array
     {
+        Log::get()->info('Try to read run results for ' . $runkey);
         $this->setRunkey($runkey);
 
         $folder = self::$path . 'done/' . $this->runkey . '/';
 
         if (!file_exists($folder))
-            throw new \Exception('Results for this runkey not present');
+        {
+            Log::get()->info('Done-Api folder not found: ' . $folder);
+            return [];
+            // throw new \Exception('Results for this runkey not present');
+        }
 
         $answer['compiler'] = $this->readCompiler($folder);
         $answer['tests'] = $this->readTests($folder);
 
+        Log::get()->info('Moving done folder to drop');
         $this->moveFolder($folder, self::$path . 'drop/' . $this->runkey);
         return $answer;
     }
@@ -151,7 +157,7 @@ class Robot
      */
     private function writeFile(string $filename, string $text) : void
     {
-        if (FALSE === file_put_contents($filename, $text))
+        if (FALSE === @file_put_contents($filename, $text))
             throw new \Exception('Error writing file ' . $filename);
     }
 
@@ -163,7 +169,7 @@ class Robot
      */
     private function readFile(string $filename) : string
     {
-        $text = file_get_contents($filename);
+        $text = @file_get_contents($filename);
         if (FALSE === $text)
             throw new \Exception('Error reading file ' . $filename);
         return $text;

@@ -3,6 +3,7 @@
 namespace FFormula\RobotSharpApi\Api;
 
 use FFormula\RobotSharpApi\Model\Program;
+use FFormula\RobotSharpApi\System\Log;
 use FFormula\RobotSharpApi\System\Robot;
 
 /**
@@ -35,6 +36,13 @@ class ApiProgram extends Api
             $this->user->row['id'],
             $get['taskId'],
             $get['langId']);
+
+        if ($program->row['status'] == 'run')
+        {
+            $run = (new Robot())->readTestFiles($program->row['runkey']);
+            if (count($run) > 0)
+                $program->updatePoints($run['compiler'], $run['tests']);
+        }
 
         return $program->row;
     }
@@ -76,36 +84,4 @@ class ApiProgram extends Api
         ];
     }
 
-    /**
-     * Проверка и получение результатов тестирования программы
-     * @param array $get - runkey запущенной программы
-     * @return array - результат тестирования,
-     *          compiler
-     *          tests
-     * @throws \Exception - в случае любой ошибки
-     */
-    public function getRunResults(array $get) : array
-    {
-        if (!$get['runkey'])
-            throw new \Exception('runkey not specified');
-
-        $program = (new Program())->selectByRunkey($get['runkey']);
-
-        if (!$program->row['taskId'])
-            throw new \Exception('Not found run program by this runkey');
-
-        if ($program->row['userId'] != $this->user->row['id'])
-            throw new \Exception('This program was run by other user');
-
-        if ($program->row['compiler'])
-            return [
-                'compiler' => $program->row['compiler'],
-                'tests' => json_decode($program->row['tests'])
-            ];
-
-        $run = (new Robot())->readTestFiles($get['runkey']);
-        $program->updatePoints($run['compiler'], $run['tests']);
-
-        return $program->row;
-    }
 }
