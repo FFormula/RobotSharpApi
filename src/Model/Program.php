@@ -126,11 +126,14 @@ class Program extends Record
         return $points;
     }
 
-    private function compareTests(string $baseFileOut, string $userFileOut) : bool
+    private function compareTests($baseFileOut, $userFileOut) : bool
     {
         Log::get()->debug($userFileOut);
         Log::get()->debug($baseFileOut);
-        $result = trim($userFileOut) == trim($baseFileOut);
+        if ($userFileOut == null || $userFileOut == '')
+            $result = false;
+        else
+            $result = trim($userFileOut) == trim($baseFileOut);
         Log::get()->debug($result ? "VALID" : "ERROR");
         return $result;
     }
