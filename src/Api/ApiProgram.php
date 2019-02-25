@@ -71,17 +71,23 @@ class ApiProgram extends Api
         if (!$get['source'])
             throw new \Exception('Source not specified');
 
+        if (!$get['mode'])
+            throw new \Exception('Mode not specified');
+
+        if ($get['mode'] != 'save' && $get['mode'] != 'run')
+            throw new \Exception('Mode must be save or run');
+
         $program = (new Program())->saveSource(
             $this->user->row['id'],
             $get['taskId'],
             $get['langId'],
-            $get['source']);
+            $get['source'],
+            $get['mode']);
 
-        (new Robot())->createRunFiles($program);
+        if ($get['mode'] == 'run')
+            (new Robot())->createRunFiles($program);
 
-        return [
-            'runkey' => $program->row['runkey']
-        ];
+        return $program->row;
     }
 
 }

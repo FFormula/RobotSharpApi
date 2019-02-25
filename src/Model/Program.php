@@ -62,14 +62,15 @@ class Program extends Record
      * @param string $taskId - какую задачу
      * @param string $langId - на каком языкп программирования
      * @param string $source - решил и прислал этот исходный код на проверку
+     * @param string $mode - run | save
      * @return Program - этот экземпляр с данными в row
      * @throws \Exception - при любой ошибке
      */
-    public function saveSource(string $userId, string $taskId, string $langId, string $source) : Program
+    public function saveSource(string $userId, string $taskId, string $langId, string $source, string $mode) : Program
     {
         $this->setDefaults($userId, $taskId, $langId, $source);
         $this->generateRunkey();
-        $this->row['status'] = 'run';
+        $this->row['status'] = ($mode == 'run') ? 'run' : 'new';
 
         if ($this->existsRecord()) // если запись уже есть
             $this->update();      // просто обновляем
