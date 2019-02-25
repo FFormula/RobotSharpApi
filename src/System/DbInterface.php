@@ -16,14 +16,14 @@ interface DbInterface
      *                False - ошибка при выполнении (в этом случае должно выкидываться исключение)
      * @throws \Exception - при любой ошибке должно кидаться исключение
      */
-    function execute(string $query, array $param = []) : bool;
+    public function execute(string $query, array $param = []) : bool;
 
     /**
      * Получение последнего добавленного значения счётчика для главного ключа
      * @return string - значение счётчика
      * @throws \Exception - при любой ошибке должно кидаться исключение
      */
-    function getLastInsertId() : string;
+    public function getLastInsertId() : string;
 
     /**
      * Выбрать скалярное значение по запрос: берётся первое значение в первой строке
@@ -32,7 +32,7 @@ interface DbInterface
      * @return string - скалярное значение
      * @throws \Exception - при любой ошибке должно кидаться исключение
      */
-    function selectValue(string $query, array $param = []): string;
+    public function selectValue(string $query, array $param = []): string;
 
     /**
      * Выбрать одну строчку по запросу и вернуть её в виде массива
@@ -41,7 +41,7 @@ interface DbInterface
      * @return array - ассоциативный массив со значениями полей, сразу
      * @throws \Exception - при любой ошибке должно кидаться исключение
      */
-    function select1Row(string $query, array $param = []) : array;
+    public function select1Row(string $query, array $param = []) : array;
 
     /**
      * Выбрать все строчки по запросу и вернуть в виде массива строк
@@ -50,5 +50,5 @@ interface DbInterface
      * @return array - нумерованный массив из ассоциативных массивов
      * @throws \Exception - при любой ошибке должно кидаться исключение
      */
-    function selectRows(string $query, array $param = []) : array;
+    public function selectRows(string $query, array $param = []) : array;
 }

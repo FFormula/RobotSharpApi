@@ -165,6 +165,7 @@ class Robot
      * Считывание файла с проверкой
      * @param string $filename - имя файла
      * @param string $text - что записать
+     * @return string - содержимое файла
      * @throws \Exception - в случае ошибки
      */
     private function readFile(string $filename) : string

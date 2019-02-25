@@ -3,7 +3,6 @@
 namespace FFormula\RobotSharpApi\Api;
 
 use FFormula\RobotSharpApi\Model\Program;
-use FFormula\RobotSharpApi\System\Log;
 use FFormula\RobotSharpApi\System\Robot;
 
 /**
