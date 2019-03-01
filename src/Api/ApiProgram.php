@@ -89,4 +89,16 @@ class ApiProgram extends Api
         return $program->row;
     }
 
+    /**
+     * @param array $get
+     * @return array
+     * @throws \Exception
+     */
+    public function getLastPrograms(array $get) : array
+    {
+        if (!$get['limit'])
+            throw new \Exception('limit not specified');
+
+        return (new Program())->getLastPrograms($get['limit']);
+    }
 }

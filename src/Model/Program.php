@@ -57,6 +57,33 @@ class Program extends Record
     }
 
     /**
+     * @param int $limit
+     * @return array
+     * @throws \Exception
+     */
+    public function getLastPrograms(int $limit) : array
+    {
+        if ($limit < 0) $limit = 0;
+        if ($limit > 100) $limit = 100;
+        return $this->db->selectRows('
+            SELECT runkey, program.taskId, program.status,   
+                   user.partnerId, partner.name partnerName, userId, user.name userName, 
+                   langId, lang, runs, points, 
+                   taskDict.caption, 
+                   program.source
+              FROM program 
+              JOIN user ON userId = user.Id 
+              JOIN partner on partnerId = partner.id
+              JOIN taskDict ON program.taskId = taskDict.taskId AND dictId = :dict 
+              JOIN lang ON langId = lang.id
+          ORDER BY runkey DESC
+             LIMIT ' . $limit,
+            [
+                'dict' => 'ru',
+            ]);
+    }
+
+    /**
      * Сохранение исходного кода от пользователя для решения задачи
      * @param string $userId - какой пользователь
      * @param string $taskId - какую задачу
