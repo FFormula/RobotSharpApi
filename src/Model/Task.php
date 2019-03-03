@@ -18,7 +18,7 @@ class Task extends Record
     {
         $this->row = $this->db->select1Row('
             SELECT id, authorId, name, sectorId, sector, step,
-                   caption, description
+                   caption, video, description
               FROM task
          LEFT JOIN taskDict 
                 ON task.id = taskDict.taskId 
@@ -39,14 +39,19 @@ class Task extends Record
     public function getList(string $dictId, string $userId) : array
     {
         return $this->db->selectRows('
-            SELECT task.id, authorId, caption, sector, MAX(points) as points
+            SELECT task.id, authorId, caption, video, sector, 
+                   MAX(p1.points) as points,
+                   COUNT(DISTINCT p2.userId) as users
               FROM task
          LEFT JOIN taskDict 
                 ON task.id = taskDict.taskId
                AND dictId = ?
-         LEFT JOIN program 
-                ON task.id = program.taskId
-               AND program.userId = ?
+         LEFT JOIN program p1 
+                ON task.id = p1.taskId
+               AND p1.userId = ?
+         LEFT JOIN program p2
+                ON task.id = p2.taskId
+               AND p2.points = 100
           GROUP BY task.id
           ORDER BY task.step', [ $dictId, $userId ]);
     }
