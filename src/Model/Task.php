@@ -52,6 +52,7 @@ class Task extends Record
          LEFT JOIN program p2
                 ON task.id = p2.taskId
                AND p2.points = 100
+             WHERE task.status = "show"
           GROUP BY task.id
           ORDER BY task.step', [ $dictId, $userId ]);
     }
